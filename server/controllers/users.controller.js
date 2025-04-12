@@ -9,17 +9,21 @@ function registerPlayer(name) {
     throw new Error('Game is full');
   }
 
-  let shuffledRoles;
   if (players.length === 0) {
-    shuffledRoles = userModel.shuffleRoles();
+    userModel.shuffleRoles();
+    console.log('Roles shuffled:', userModel.getShuffledRoles());
   }
 
-  const roles = userModel.getAvailableRoles();
-  const role = shuffledRoles ? shuffledRoles[players.length] : roles[players.length];
-  
+
+  const role = userModel.getNextRole();
+  if (!role) {
+    throw new Error('No roles available');
+  }
+
   const player = userModel.createPlayer(name, role);
+  console.log(`Player ${name} created with role ${role}`);
   
-  // If we now have 3 players, game can start
+
   if (players.length === 3) {
     gameModel.setGameState(gameModel.GameState.IN_PROGRESS);
   }
@@ -73,11 +77,20 @@ function resetGame() {
   return { success: true };
 }
 
+function getGameInfo() {
+  return {
+    players: userModel.getAllPlayers(),
+    gameState: gameModel.getCurrentState(),
+    winner: gameModel.getWinner()
+  };
+}
+
 module.exports = {
   registerPlayer,
   startGame,
   handleMarcoCall,
   handlePoloResponse,
   selectPolo,
-  resetGame
+  resetGame,
+  getGameInfo
 };

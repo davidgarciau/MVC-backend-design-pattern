@@ -18,5 +18,28 @@ module.exports = (io) => {
     }
   });
 
+  // Route to get current game information
+  router.get('/game-info', (req, res) => {
+    try {
+      const gameInfo = usersController.getGameInfo();
+      res.status(200).json(gameInfo);
+    } catch (error) {
+      console.error('Game info error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Route to reset the game
+  router.post('/reset-game', (req, res) => {
+    try {
+      const result = usersController.resetGame();
+      io.emit('gameReset');
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('Reset game error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   return router;
 };

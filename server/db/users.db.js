@@ -1,17 +1,33 @@
-// Model for users/players
 const players = [];
 let marcoPlayer = null;
 const polosQueGritaron = [];
 
-const roles = ['marco', 'polo', 'polo-especial'];
+
+const roleTypes = ['marco', 'polo', 'polo-especial'];
+
+let shuffledRoles = [...roleTypes];
 
 function shuffleRoles() {
-  const rolesArray = [...roles];
-  for (let i = rolesArray.length - 1; i > 0; i--) {
+
+  shuffledRoles = [...roleTypes];
+  for (let i = shuffledRoles.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [rolesArray[i], rolesArray[j]] = [rolesArray[j], rolesArray[i]];
+    [shuffledRoles[i], shuffledRoles[j]] = [shuffledRoles[j], shuffledRoles[i]];
   }
-  return rolesArray;
+  return shuffledRoles;
+}
+
+function getShuffledRoles() {
+  return shuffledRoles;
+}
+
+function getNextRole() {
+
+  const nextRoleIndex = players.length;
+  if (nextRoleIndex >= shuffledRoles.length) {
+    return null; 
+  }
+  return shuffledRoles[nextRoleIndex];
 }
 
 function getAllPlayers() {
@@ -52,7 +68,7 @@ function resetPoloResponses() {
 }
 
 function getAvailableRoles() {
-  return roles;
+  return roleTypes;
 }
 
 function getPlayerById(id) {
@@ -63,6 +79,8 @@ function resetPlayers() {
   players.length = 0;
   marcoPlayer = null;
   resetPoloResponses();
+  // Reset shuffled roles to original order
+  shuffledRoles = [...roleTypes];
 }
 
 module.exports = {
@@ -74,6 +92,8 @@ module.exports = {
   resetPoloResponses,
   getAvailableRoles,
   shuffleRoles,
+  getShuffledRoles,
+  getNextRole,
   getPlayerById,
   resetPlayers
 }; 
